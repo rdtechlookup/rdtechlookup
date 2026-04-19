@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RD TECH | Master Admin Terminal</title>
+    <title>RD TECH LOOKUP | VIP Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -12,103 +12,345 @@
         .selectable { -webkit-user-select: text !important; user-select: text !important; }
         body { 
             background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; 
-            display: flex; align-items: flex-start; justify-content: center; 
-            min-height: 100vh; margin: 0; padding: 20px 0;
-            background-image: radial-gradient(circle at 50% 50%, #450a0a 0%, #020617 100%);
+            display: flex; align-items: center; justify-content: center; 
+            min-height: 100vh; margin: 0;
+            background-image: radial-gradient(circle at 50% 50%, #052e16 0%, #020617 100%);
         }
         .rd-panel { 
-            background: rgba(15, 23, 42, 0.95); border: 1px solid #ef4444; 
-            box-shadow: 0 0 50px rgba(239, 68, 68, 0.2); 
-            width: 95%; max-width: 500px; border-radius: 30px; backdrop-filter: blur(15px);
+            background: rgba(15, 23, 42, 0.9); border: 1px solid #22c55e; 
+            box-shadow: 0 0 50px rgba(34, 197, 94, 0.2); 
+            width: 95%; max-width: 420px; border-radius: 30px; backdrop-filter: blur(15px);
+            position: relative;
         }
         .tech-font { font-family: 'Orbitron', sans-serif; }
-        .btn-red { background: linear-gradient(90deg, #ef4444, #991b1b); transition: 0.3s; }
-        .btn-red:active { transform: scale(0.95); }
-        .btn-dark { background: #0f172a; border: 1px solid #334155; transition: 0.3s; }
-        .btn-dark:active { background: #1e293b; }
-        input, select { background: rgba(0,0,0,0.5); border: 1px solid #334155; color: white; }
-        input:focus, select:focus { border-color: #ef4444; outline: none; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #ef4444; border-radius: 10px; }
+        .intel-card { background: #0f172a; border: 1px solid #1e293b; border-left: 5px solid #22c55e; border-radius: 15px; padding: 18px; margin-bottom: 12px; }
+        .search-btn { background: linear-gradient(90deg, #22c55e, #15803d); transition: 0.3s; }
+        .search-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-    <div class="rd-panel overflow-hidden mb-10">
-        <div class="p-8 pb-4 text-center border-b border-white/5 relative">
-            <button onclick="location.reload()" class="absolute top-6 right-6 text-slate-500 hover:text-red-500 transition-colors hidden" id="lock-sys-btn">
-                <i class="fas fa-lock text-lg"></i>
+    <div class="rd-panel overflow-hidden">
+        
+        <div id="profile-bar" class="hidden absolute top-0 left-0 w-full bg-green-900/80 border-b border-green-500/50 py-2 px-4 flex justify-between items-center z-10 backdrop-blur-md">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-user-shield text-green-400 text-xs"></i>
+                <span id="display-user-email" class="text-[9px] font-mono text-green-100 tracking-wider truncate max-w-[150px]">user@email.com</span>
+            </div>
+            <button id="logout-btn" class="bg-black/40 hover:bg-red-600 text-slate-300 hover:text-white px-3 py-1 rounded text-[8px] uppercase font-bold tech-font tracking-widest transition-colors border border-slate-700 hover:border-red-500">
+                <i class="fas fa-power-off mr-1"></i> Disconnect
             </button>
-            <i class="fas fa-server text-4xl text-red-500 mb-3 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]"></i>
-            <h1 class="tech-font text-white font-bold text-xl uppercase tracking-tighter">RD TECH ADMIN</h1>
-            <p class="text-[9px] text-red-500 tracking-[0.5em] font-bold mt-1 uppercase">Master Control Node</p>
+        </div>
+
+        <div class="p-8 pb-4 text-center border-b border-white/5 mt-6">
+            <div class="w-28 h-28 mx-auto mb-3">
+                <img src="https://i.ibb.co/DPsHqPJ2/Chat-GPT-Image-Apr-15-2026-04-26-05-PM.png" alt="Logo" class="w-full h-full object-contain">
+            </div>
+            <h1 class="tech-font text-white font-bold text-xl uppercase tracking-tighter">RD TECH LOOKUP</h1>
+            <p class="text-[9px] text-green-500 tracking-[0.5em] font-bold mt-1 uppercase">Secure VIP Core</p>
         </div>
 
         <div class="p-6">
-            <div id="admin-gate">
-                <input type="password" id="admin-pass" class="w-full rounded-2xl p-4 mb-4 text-center text-red-500 tracking-[0.8em]" placeholder="ADMIN PIN">
-                <button onclick="unlockAdmin()" class="w-full btn-red text-white py-4 rounded-2xl tech-font text-xs font-bold uppercase tracking-widest shadow-lg shadow-red-900/50">Verify Admin</button>
-            </div>
-
-            <div id="management-console" class="hidden space-y-6">
-                
-                <div class="grid grid-cols-3 gap-2 text-center">
-                    <div class="bg-black/60 border border-slate-800 rounded-xl p-3">
-                        <p class="text-[8px] text-slate-500 tech-font uppercase tracking-widest mb-1">Total</p>
-                        <p id="stat-total" class="text-xl font-bold text-white tech-font">0</p>
-                    </div>
-                    <div class="bg-black/60 border border-green-900/50 rounded-xl p-3">
-                        <p class="text-[8px] text-green-500 tech-font uppercase tracking-widest mb-1">Active</p>
-                        <p id="stat-active" class="text-xl font-bold text-green-400 tech-font">0</p>
-                    </div>
-                    <div class="bg-black/60 border border-red-900/50 rounded-xl p-3">
-                        <p class="text-[8px] text-red-500 tech-font uppercase tracking-widest mb-1">Blocked</p>
-                        <p id="stat-blocked" class="text-xl font-bold text-red-400 tech-font">0</p>
-                    </div>
-                </div>
-
-                <div class="bg-black/40 p-5 rounded-2xl border border-red-900/30 shadow-inner">
-                    <h2 class="tech-font text-xs text-red-400 mb-4 uppercase tracking-wider"><i class="fas fa-user-shield mr-2"></i>Access Control</h2>
-                    <input type="email" id="user-email" class="w-full rounded-xl p-3 mb-3 text-sm selectable" placeholder="Customer Email">
-                    <input type="text" id="user-pass" class="w-full rounded-xl p-3 mb-3 text-sm selectable" placeholder="New Password (Leave blank to keep old)">
-                    <select id="user-status" class="w-full rounded-xl p-3 mb-4 text-sm font-bold">
-                        <option value="active" class="text-green-500">Status: ACTIVE (Paid)</option>
-                        <option value="expired" class="text-yellow-500">Status: EXPIRED (Must Renew)</option>
-                        <option value="banned" class="text-red-600">Status: BANNED / BLOCKED (Malicious)</option>
-                    </select>
-                    <button id="save-btn" class="w-full btn-red text-white py-3 rounded-xl tech-font text-xs font-bold uppercase tracking-widest shadow-lg shadow-red-900/50">
-                        Execute Override
+            <div id="login-gate" class="space-y-4">
+                <div class="bg-black/40 p-5 rounded-2xl border border-slate-800 shadow-inner">
+                    <p class="text-[10px] text-slate-400 tech-font mb-4 text-center tracking-widest uppercase"><i class="fas fa-lock mr-2"></i>Encrypted Login</p>
+                    <input type="email" id="login-email" class="w-full bg-black/60 border border-slate-700 rounded-xl p-3 mb-3 text-sm text-center text-green-400 outline-none focus:border-green-500 shadow-inner" placeholder="Subscriber Email">
+                    <input type="password" id="login-pass" class="w-full bg-black/60 border border-slate-700 rounded-xl p-3 mb-4 text-sm text-center text-green-400 outline-none focus:border-green-500 tracking-widest shadow-inner" placeholder="Password">
+                    <button id="do-login-btn" class="w-full search-btn text-white py-3 rounded-xl tech-font text-xs font-bold uppercase tracking-widest shadow-lg shadow-green-900/20">
+                        Authenticate
                     </button>
-                    <p id="sys-msg" class="text-center text-[10px] mt-3 font-mono h-4 text-slate-400"></p>
-                </div>
-
-                <div class="bg-black/40 p-5 rounded-2xl border border-slate-800">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="tech-font text-xs text-slate-300 uppercase tracking-wider"><i class="fas fa-users mr-2"></i>Database</h2>
-                        <button onclick="loadUsers()" class="text-slate-400 hover:text-white transition-colors"><i class="fas fa-sync-alt"></i></button>
-                    </div>
-                    
-                    <input type="text" id="search-users" class="w-full bg-black/60 border border-slate-700 rounded-lg p-2 mb-3 text-xs text-center outline-none" placeholder="Search by Email...">
-
-                    <div id="user-list" class="space-y-2 max-h-[300px] overflow-y-auto pr-2">
-                        <p class="text-center text-slate-500 text-xs py-4 tech-font uppercase">Loading Database...</p>
-                    </div>
+                    <p id="login-msg" class="text-center text-[10px] mt-4 font-mono h-4 text-red-500 leading-relaxed"></p>
                 </div>
             </div>
+
+            <div id="main-app" class="hidden">
+                <div class="flex gap-2 mb-6 bg-black/40 p-1 rounded-2xl border border-slate-800 shadow-inner">
+                    <input type="text" id="phone-in" class="flex-1 bg-transparent p-4 text-green-400 font-mono text-lg outline-none" placeholder="Enter Target Number" autocomplete="off">
+                    <button onclick="initiateSearch()" class="search-btn px-6 rounded-xl text-white shadow-lg">
+                        <i class="fas fa-search text-lg"></i>
+                    </button>
+                </div>
+                <div id="loader" class="hidden text-center py-8">
+                    <div class="w-10 h-10 border-4 border-green-500 border-t-transparent rounded-full animate-spin inline-block mb-3"></div>
+                    <p id="load-status" class="text-[9px] tech-font text-green-500 tracking-widest uppercase animate-pulse">Establishing Secure Tunnel...</p>
+                </div>
+                <div id="results-area" class="hidden space-y-4 max-h-[380px] overflow-y-auto pr-2 selectable"></div>
+            </div>
+        </div>
+
+        <div class="p-4 bg-black/40 text-center border-t border-white/5 space-y-2 mt-auto">
+            <p class="text-[10px] text-slate-500 tech-font">All copyrights reserved ©RD TECH HUB</p>
+            <p class="text-xs text-slate-400 tech-font uppercase tracking-widest">Owner <a href="https://t.me/legalxheartbreaker" target="_blank" class="text-green-500 font-bold hover:text-green-400 hover:underline transition-all drop-shadow-[0_0_5px_rgba(34,197,94,0.5)]">RD TECH</a></p>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         // YOUR FIREBASE KEYS
         const firebaseConfig = {
             apiKey: "AIzaSyBWRGm_ixHVuGKyve4jBcWcpUNJFNN_IZk",
             authDomain: "rd-tech-subs-bc1d4.firebaseapp.com",
             projectId: "rd-tech-subs-bc1d4",
+            storageBucket: "rd-tech-subs-bc1d4.firebasestorage.app",
+            messagingSenderId: "134428732541",
+            appId: "1:134428732541:web:eb61db52ca8ae82b281514"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const loginGate = document.getElementById('login-gate');
+        const mainApp = document.getElementById('main-app');
+        const msgBox = document.getElementById('login-msg');
+        const profileBar = document.getElementById('profile-bar');
+        const displayEmail = document.getElementById('display-user-email');
+        const resultsArea = document.getElementById('results-area');
+        const phoneIn = document.getElementById('phone-in');
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                displayEmail.innerText = user.email;
+                verifySubscription(user.email);
+            }
+        });
+
+        document.getElementById('do-login-btn').addEventListener('click', async () => {
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
+            const pass = document.getElementById('login-pass').value.trim();
+            if(!email || !pass) { msgBox.innerHTML = "SYSTEM ALERT:<br>ENTER CREDENTIALS"; return; }
+            msgBox.innerHTML = "VERIFYING ENCRYPTION KEYS..."; msgBox.style.color = "#fbbf24";
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+                displayEmail.innerText = userCredential.user.email;
+                verifySubscription(userCredential.user.email);
+            } catch (error) {
+                msgBox.innerHTML = "ACCESS DENIED:<br>INVALID EMAIL OR PASSWORD";
+                msgBox.style.color = "#ef4444";
+            }
+        });
+
+        // NEW: Advanced Logout Logic
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                // Hide App, Show Login
+                mainApp.classList.add('hidden'); 
+                profileBar.classList.add('hidden');
+                loginGate.classList.remove('hidden'); 
+                
+                // Clear all previous data for security
+                document.getElementById('login-pass').value = '';
+                phoneIn.value = '';
+                resultsArea.innerHTML = '';
+                resultsArea.classList.add('hidden');
+                
+                msgBox.innerHTML = "SESSION TERMINATED SECURELY.";
+                msgBox.style.color = "#22c55e";
+            });
+        });
+
+        async function verifySubscription(email) {
+            msgBox.innerHTML = "CHECKING DATABASE CLEARANCE...";
+            try {
+                const docRef = doc(db, "subscriptions", email);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const status = docSnap.data().status;
+                    
+                    if(status === "active") {
+                        // Let them in
+                        loginGate.classList.add('hidden'); 
+                        mainApp.classList.remove('hidden'); 
+                        profileBar.classList.remove('hidden');
+                        msgBox.innerHTML = "";
+                    } 
+                    else if (status === "banned") {
+                        // NEW: Banned User Logic
+                        await signOut(auth);
+                        msgBox.innerHTML = "<span class='text-white bg-red-600 px-2 py-1 rounded font-bold'>CRITICAL ALERT</span><br>THIS ACCOUNT HAS BEEN BLACKLISTED DUE TO POLICY VIOLATIONS."; 
+                        msgBox.style.color = "#ef4444";
+                    }
+                    else {
+                        // Expired
+                        await signOut(auth);
+                        msgBox.innerHTML = "ACCESS RESTRICTED:<br>SUBSCRIPTION EXPIRED. PLEASE RENEW."; 
+                        msgBox.style.color = "#ef4444";
+                    }
+                } else {
+                    await signOut(auth);
+                    msgBox.innerHTML = "SECURITY FAULT:<br>NO DATABASE RECORD FOUND FOR THIS USER."; 
+                    msgBox.style.color = "#ef4444";
+                }
+            } catch (err) {
+                msgBox.innerHTML = "SYSTEM ERROR:<br>" + err.message; 
+                msgBox.style.color = "#ef4444";
+            }
+        }
+    </script>
+
+    <script>
+        document.addEventListener('keydown', function(e) {
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73) || (e.ctrlKey && e.keyCode == 85)) { e.preventDefault(); return false; }
+        });
+
+        const _a = atob("YUhSMGNITTZMeTlqZDJKbGNpMXZjMmx1ZEMxdWRXMHRhVzVtYjNNdWRtVnlZMlZzTG1Gd2NDOWhjR2t2Ym5WdGFXNW1iejVyWlhsOVFXNXZibmx0YjNWekptNTFiVDA9"); 
+        const _b = [atob("NzQ3NzU0Mzk3Nw=="), atob("ODUwOTcxNDk1MQ=="), atob("ODYwOTU1Mzg2OQ==")];
+
+        async function fetchWithTimeout(url, options, timeout = 7000) {
+            return Promise.race([
+                fetch(url, options),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeout))
+            ]);
+        }
+
+        function flattenObject(ob) {
+            let toReturn = {};
+            for (let i in ob) {
+                if (!ob.hasOwnProperty(i)) continue;
+                if ((typeof ob[i]) === 'object' && ob[i] !== null && !Array.isArray(ob[i])) {
+                    let flatObject = flattenObject(ob[i]);
+                    for (let x in flatObject) {
+                        if (!flatObject.hasOwnProperty(x)) continue;
+                        toReturn[i + '_' + x] = flatObject[x];
+                    }
+                } else { toReturn[i] = ob[i]; }
+            }
+            return toReturn;
+        }
+
+        function extractData(obj, possibleKeys, defaultVal) {
+            for (let k of possibleKeys) {
+                let foundKey = Object.keys(obj).find(key => key.toLowerCase() === k.toLowerCase());
+                if (foundKey) { let val = obj[foundKey]; delete obj[foundKey]; return val; }
+            }
+            return defaultVal;
+        }
+
+        window.initiateSearch = async function() {
+            const num = document.getElementById('phone-in').value.trim();
+            const loader = document.getElementById('loader');
+            const wrap = document.getElementById('results-area');
+            const status = document.getElementById('load-status');
+
+            if(!num) return;
+
+            if(_b.includes(num)) {
+                wrap.innerHTML = `<div class="text-center p-8 bg-red-600/20 border border-red-500 rounded-2xl shadow-lg">
+                    <i class="fas fa-user-secret text-red-500 text-3xl mb-4"></i>
+                    <p class="text-red-500 font-bold tech-font text-sm uppercase leading-relaxed">"OWNER KA DETAILS NIKALOGE BETA"</p>
+                </div>`;
+                wrap.classList.remove('hidden'); loader.classList.add('hidden'); return;
+            }
+
+            loader.classList.remove('hidden'); wrap.classList.add('hidden'); wrap.innerHTML = "";
+            status.innerText = "Bypassing Security Firewalls...";
+
+            const targetURL = atob(_a) + num;
+            const encodedTarget = encodeURIComponent(targetURL);
+            
+            let proxyPool = [
+                `https://api.allorigins.win/raw?url=${encodedTarget}`,
+                `https://api.codetabs.com/v1/proxy?quest=${encodedTarget}`,
+                `https://corsproxy.io/?${encodedTarget}`,
+                `https://thingproxy.freeboard.io/fetch/${targetURL}`
+            ];
+
+            proxyPool.sort(() => Math.random() - 0.5);
+            proxyPool.unshift(targetURL);
+
+            let dataFound = null;
+
+            for (let i = 0; i < proxyPool.length; i++) {
+                try {
+                    status.innerText = `Establishing Secure Tunnel [Node ${i+1}/5]...`;
+                    const response = await fetchWithTimeout(proxyPool[i], { cache: 'no-store' }, 6500);
+                    if (!response.ok) continue; 
+                    const data = await response.json();
+                    
+                    if (data.results || data.data || data.full_name || data.name || Object.keys(data).length > 2) {
+                        dataFound = data; break; 
+                    }
+                } catch (err) { console.log(`Node failed`); }
+            }
+
+            loader.classList.add('hidden');
+
+            if (dataFound) {
+                const results = dataFound.results || dataFound.data || (Array.isArray(dataFound) ? dataFound : [dataFound]);
+                if (results.length > 0) { renderCards(results, num); } 
+                else {
+                    wrap.innerHTML = `<p class="text-center py-10 text-slate-500 text-[9px] tech-font uppercase">NO TARGET DATA IN DATABASE</p>`;
+                    wrap.classList.remove('hidden');
+                }
+            } else {
+                wrap.innerHTML = `<div class="text-center py-10">
+                    <p class="text-red-500 text-[10px] font-bold tech-font uppercase leading-relaxed mb-2">CONNECTION REJECTED</p>
+                    <p class="text-slate-400 text-[9px] tech-font uppercase">All proxy nodes failed or the Master API is rate-limited.<br>Try again in 5 minutes.</p>
+                </div>`;
+                wrap.classList.remove('hidden');
+            }
+        }
+
+        function renderCards(results, num) {
+            const wrap = document.getElementById('results-area');
+            
+            results.forEach((rawItem) => {
+                const item = flattenObject(rawItem);
+                
+                delete item['status']; delete item['message']; delete item['success'];
+
+                const headerName = extractData(item, ['full_name', 'name'], 'TARGET DATA RECORD');
+                const fatherName = extractData(item, ['father_name', 'father', 'fname'], 'Not Available');
+                const addressData = extractData(item, ['location_address', 'address'], 'Not Available');
+                const altNum = extractData(item, ['alternate_number', 'alt_mobile', 'alt_phone', 'alt'], 'Not Available');
+                const govId = extractData(item, ['id', 'aadhaar', 'gov_id', 'uid', 'id_number'], 'Not Available');
+                
+                extractData(item, ['primary_number', 'mobile', 'phone', 'contact_info_primary'], null);
+
+                let boxesHTML = `
+                    <div class="col-span-2 bg-green-900/20 border border-green-500/30 rounded-lg p-3 flex flex-col justify-center mb-1 shadow-inner">
+                        <span class="text-green-500 text-[8px] uppercase font-bold tracking-wider mb-1">ADDRESS</span>
+                        <span class="text-green-50 text-[10px] break-words font-mono">${addressData}</span>
+                    </div>
+                    <div class="bg-black/40 border border-slate-700/50 rounded-lg p-3 flex flex-col justify-center">
+                        <span class="text-slate-500 text-[8px] uppercase font-bold tracking-wider mb-1">FATHER NAME</span>
+                        <span class="text-green-50 text-[10px] break-words font-mono">${fatherName}</span>
+                    </div>
+                    <div class="bg-black/40 border border-slate-700/50 rounded-lg p-3 flex flex-col justify-center">
+                        <span class="text-slate-500 text-[8px] uppercase font-bold tracking-wider mb-1">GOVT ID NUMBER</span>
+                        <span class="text-red-400 text-[10px] break-words font-mono font-bold drop-shadow-[0_0_2px_rgba(248,113,113,0.8)]">${govId}</span>
+                    </div>
+                    <div class="bg-black/40 border border-slate-700/50 rounded-lg p-3 flex flex-col justify-center">
+                        <span class="text-slate-500 text-[8px] uppercase font-bold tracking-wider mb-1">PRIMARY NUMBER</span>
+                        <span class="text-green-50 text-[10px] break-words font-mono">${num}</span>
+                    </div>
+                    <div class="bg-black/40 border border-slate-700/50 rounded-lg p-3 flex flex-col justify-center">
+                        <span class="text-slate-500 text-[8px] uppercase font-bold tracking-wider mb-1">ALTERNATE NUMBER</span>
+                        <span class="text-green-50 text-[10px] break-words font-mono">${altNum}</span>
+                    </div>
+                `;
+
+                for (const [key, value] of Object.entries(item)) {
+                    if (value === null || value === '' || value === undefined) continue;
+                    
+                    const cleanKey = key.replace(/[^a-zA-Z0-9]/g, ' ').toUpperCase();
+                    boxesHTML += `
+                        <div class="bg-black/20 border border-slate-800/50 rounded-lg p-3 flex flex-col justify-center">
+                            <span class="text-slate-600 text-[8px] uppercase font-bold tracking-wider mb-1">${cleanKey}</span>
+                            <span class="text-slate-300 text-[9px] break-words font-mono">${value}</span>
+                        </div>
+                    `;
+                }
+
+                const card = document.createElement('div');
+                card.className = "intel-card";
+                card.innerHTML = `
+                    <div class="flex justify-betw            projectId: "rd-tech-subs-bc1d4",
             storageBucket: "rd-tech-subs-bc1d4.firebasestorage.app",
             messagingSenderId: "134428732541",
             appId: "1:134428732541:web:eb61db52ca8ae82b281514"
