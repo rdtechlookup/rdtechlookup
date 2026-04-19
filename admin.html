@@ -10,90 +10,41 @@
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600&display=swap');
         * { -webkit-user-select: none; user-select: none; outline: none !important; }
         .selectable { -webkit-user-select: text !important; user-select: text !important; }
-        body { 
-            background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; 
-            display: flex; align-items: flex-start; justify-content: center; 
-            min-height: 100vh; margin: 0; padding: 20px 0;
-            background-image: radial-gradient(circle at 50% 50%, #450a0a 0%, #020617 100%);
-        }
-        .rd-panel { 
-            background: rgba(15, 23, 42, 0.95); border: 1px solid #ef4444; 
-            box-shadow: 0 0 50px rgba(239, 68, 68, 0.2); 
-            width: 95%; max-width: 500px; border-radius: 30px; backdrop-filter: blur(15px);
-        }
+        body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; display: flex; align-items: flex-start; justify-content: center; min-height: 100vh; margin: 0; padding: 20px 0; background-image: radial-gradient(circle at 50% 50%, #450a0a 0%, #020617 100%); }
+        .rd-panel { background: rgba(15, 23, 42, 0.95); border: 1px solid #ef4444; box-shadow: 0 0 50px rgba(239, 68, 68, 0.2); width: 95%; max-width: 480px; border-radius: 30px; backdrop-filter: blur(15px); }
         .tech-font { font-family: 'Orbitron', sans-serif; }
         .btn-red { background: linear-gradient(90deg, #ef4444, #991b1b); transition: 0.3s; }
-        .btn-red:active { transform: scale(0.95); }
-        .btn-dark { background: #0f172a; border: 1px solid #334155; transition: 0.3s; }
-        .btn-dark:active { background: #1e293b; }
         input, select { background: rgba(0,0,0,0.5); border: 1px solid #334155; color: white; }
-        input:focus, select:focus { border-color: #ef4444; outline: none; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #ef4444; border-radius: 10px; }
     </style>
 </head>
-<body oncontextmenu="return false;">
-
+<body>
     <div class="rd-panel overflow-hidden mb-10">
-        <div class="p-8 pb-4 text-center border-b border-white/5 relative">
-            <button onclick="location.reload()" class="absolute top-6 right-6 text-slate-500 hover:text-red-500 transition-colors hidden" id="lock-sys-btn">
-                <i class="fas fa-lock text-lg"></i>
-            </button>
-            <i class="fas fa-server text-4xl text-red-500 mb-3 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]"></i>
+        <div class="p-8 pb-4 text-center border-b border-white/5">
             <h1 class="tech-font text-white font-bold text-xl uppercase tracking-tighter">RD TECH ADMIN</h1>
-            <p class="text-[9px] text-red-500 tracking-[0.5em] font-bold mt-1 uppercase">Master Control Node</p>
+            <p class="text-[9px] text-red-500 tracking-[0.5em] font-bold mt-1 uppercase">V4 FORCE-CONNECT</p>
         </div>
 
         <div class="p-6">
             <div id="admin-gate">
                 <input type="password" id="admin-pass" class="w-full rounded-2xl p-4 mb-4 text-center text-red-500 tracking-[0.8em]" placeholder="ADMIN PIN">
-                <button onclick="unlockAdmin()" class="w-full btn-red text-white py-4 rounded-2xl tech-font text-xs font-bold uppercase tracking-widest shadow-lg shadow-red-900/50">Verify Admin</button>
+                <button onclick="unlockAdmin()" class="w-full btn-red text-white py-4 rounded-2xl tech-font text-xs font-bold uppercase tracking-widest">Verify Admin</button>
             </div>
 
             <div id="management-console" class="hidden space-y-6">
-                
-                <div class="grid grid-cols-3 gap-2 text-center">
-                    <div class="bg-black/60 border border-slate-800 rounded-xl p-3">
-                        <p class="text-[8px] text-slate-500 tech-font uppercase tracking-widest mb-1">Total</p>
-                        <p id="stat-total" class="text-xl font-bold text-white tech-font">0</p>
-                    </div>
-                    <div class="bg-black/60 border border-green-900/50 rounded-xl p-3">
-                        <p class="text-[8px] text-green-500 tech-font uppercase tracking-widest mb-1">Active</p>
-                        <p id="stat-active" class="text-xl font-bold text-green-400 tech-font">0</p>
-                    </div>
-                    <div class="bg-black/60 border border-red-900/50 rounded-xl p-3">
-                        <p class="text-[8px] text-red-500 tech-font uppercase tracking-widest mb-1">Blocked</p>
-                        <p id="stat-blocked" class="text-xl font-bold text-red-400 tech-font">0</p>
-                    </div>
-                </div>
-
-                <div class="bg-black/40 p-5 rounded-2xl border border-red-900/30 shadow-inner">
-                    <h2 class="tech-font text-xs text-red-400 mb-4 uppercase tracking-wider"><i class="fas fa-user-shield mr-2"></i>Access Control</h2>
-                    <input type="email" id="user-email" class="w-full rounded-xl p-3 mb-3 text-sm selectable" placeholder="Customer Email">
-                    <input type="text" id="user-pass" class="w-full rounded-xl p-3 mb-3 text-sm selectable" placeholder="New Password (Leave blank to keep old)">
+                <div class="bg-black/40 p-5 rounded-2xl border border-red-900/30">
+                    <input type="email" id="user-email" class="w-full rounded-xl p-3 mb-3 text-sm selectable" placeholder="User Email">
+                    <input type="text" id="user-pass" class="w-full rounded-xl p-3 mb-3 text-sm selectable" placeholder="Password (Min 6 chars)">
                     <select id="user-status" class="w-full rounded-xl p-3 mb-4 text-sm font-bold">
-                        <option value="active" class="text-green-500">Status: ACTIVE (Paid)</option>
-                        <option value="expired" class="text-yellow-500">Status: EXPIRED (Must Renew)</option>
-                        <option value="banned" class="text-red-600">Status: BANNED / BLOCKED (Malicious)</option>
+                        <option value="active" class="text-green-500">ACTIVE</option>
+                        <option value="expired" class="text-yellow-500">EXPIRED</option>
+                        <option value="banned" class="text-red-500">BANNED</option>
                     </select>
-                    <button id="save-btn" class="w-full btn-red text-white py-3 rounded-xl tech-font text-xs font-bold uppercase tracking-widest shadow-lg shadow-red-900/50">
-                        Execute Override
-                    </button>
+                    <button id="save-btn" class="w-full btn-red text-white py-3 rounded-xl tech-font text-xs font-bold uppercase tracking-widest">Execute Override</button>
                     <p id="sys-msg" class="text-center text-[10px] mt-3 font-mono h-4 text-slate-400"></p>
                 </div>
-
                 <div class="bg-black/40 p-5 rounded-2xl border border-slate-800">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="tech-font text-xs text-slate-300 uppercase tracking-wider"><i class="fas fa-users mr-2"></i>Database</h2>
-                        <button onclick="loadUsers()" class="text-slate-400 hover:text-white transition-colors"><i class="fas fa-sync-alt"></i></button>
-                    </div>
-                    
-                    <input type="text" id="search-users" class="w-full bg-black/60 border border-slate-700 rounded-lg p-2 mb-3 text-xs text-center outline-none" placeholder="Search by Email...">
-
-                    <div id="user-list" class="space-y-2 max-h-[300px] overflow-y-auto pr-2">
-                        <p class="text-center text-slate-500 text-xs py-4 tech-font uppercase">Loading Database...</p>
-                    </div>
+                    <button onclick="loadUsers()" class="w-full bg-slate-800 py-2 rounded text-[10px] text-white tech-font mb-4">REFRESH LIST</button>
+                    <div id="user-list" class="space-y-2 max-h-[300px] overflow-y-auto pr-2"></div>
                 </div>
             </div>
         </div>
@@ -102,13 +53,89 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, collection, getDocs, initializeFirestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // YOUR FIREBASE KEYS
         const firebaseConfig = {
             apiKey: "AIzaSyBWRGm_ixHVuGKyve4jBcWcpUNJFNN_IZk",
             authDomain: "rd-tech-subs-bc1d4.firebaseapp.com",
             projectId: "rd-tech-subs-bc1d4",
+            storageBucket: "rd-tech-subs-bc1d4.firebasestorage.app",
+            messagingSenderId: "134428732541",
+            appId: "1:134428732541:web:eb61db52ca8ae82b281514"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        // FORCE-CONNECT: This fixes hanging connections on mobile browsers
+        const db = initializeFirestore(app, {
+            experimentalForceLongPolling: true,
+            useFetchStreams: false
+        });
+
+        window.unlockAdmin = function() {
+            if(document.getElementById('admin-pass').value === "RDADMIN7") {
+                document.getElementById('admin-gate').classList.add('hidden');
+                document.getElementById('management-console').classList.remove('hidden');
+                window.loadUsers();
+            } else { alert("WRONG PIN"); }
+        };
+
+        window.loadUsers = async function() {
+            const listDiv = document.getElementById('user-list');
+            listDiv.innerHTML = '<p class="text-center text-[10px] animate-pulse">CONNECTING...</p>';
+            try {
+                const querySnapshot = await getDocs(collection(db, "subscriptions"));
+                let html = '';
+                querySnapshot.forEach((doc) => {
+                    const status = doc.data().status;
+                    html += `<div class="bg-black/60 p-3 rounded-lg border border-slate-800 flex justify-between">
+                        <span class="text-[10px] font-mono truncate mr-2">${doc.id}</span>
+                        <span class="text-[9px] font-bold uppercase ${status=='active'?'text-green-500':'text-red-500'}">${status}</span>
+                    </div>`;
+                });
+                listDiv.innerHTML = html || '<p class="text-center text-[10px]">NO USERS</p>';
+            } catch(e) { listDiv.innerHTML = `<p class="text-red-500 text-[10px]">ERROR: ${e.message}</p>`; }
+        };
+
+        document.getElementById('save-btn').addEventListener('click', async () => {
+            const email = document.getElementById('user-email').value.trim().toLowerCase();
+            const pass = document.getElementById('user-pass').value.trim();
+            const status = document.getElementById('user-status').value;
+            const msgBox = document.getElementById('sys-msg');
+
+            if(!email) return;
+            msgBox.innerText = "OVERRIDING...";
+
+            // Added a 10-second timeout so it doesn't hang forever
+            const timeout = setTimeout(() => {
+                if(msgBox.innerText === "OVERRIDING...") {
+                    msgBox.innerText = "TIMEOUT: DATABASE IS BUSY. REFRESH PAGE.";
+                    msgBox.style.color = "red";
+                }
+            }, 10000);
+
+            try {
+                if(pass && pass.length >= 6) {
+                    try {
+                        await createUserWithEmailAndPassword(auth, email, pass);
+                        await signOut(auth);
+                    } catch(e) { if(e.code !== 'auth/email-already-in-use') throw e; }
+                }
+                await setDoc(doc(db, "subscriptions", email), { status: status }, { merge: true });
+                clearTimeout(timeout);
+                msgBox.innerText = "SUCCESS: " + status.toUpperCase();
+                msgBox.style.color = "#22c55e";
+                window.loadUsers();
+            } catch(e) {
+                clearTimeout(timeout);
+                msgBox.innerText = "FAILED: " + e.message;
+                msgBox.style.color = "red";
+            }
+        });
+    </script>
+</body>
+</html>            projectId: "rd-tech-subs-bc1d4",
             storageBucket: "rd-tech-subs-bc1d4.firebasestorage.app",
             messagingSenderId: "134428732541",
             appId: "1:134428732541:web:eb61db52ca8ae82b281514"
