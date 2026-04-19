@@ -3,59 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RD TECH | Master Admin Terminal</title>
+    <title>RD TECH | Debug Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600&display=swap');
-        * { -webkit-user-select: none; user-select: none; outline: none !important; }
-        .selectable { -webkit-user-select: text !important; user-select: text !important; }
-        body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; display: flex; align-items: flex-start; justify-content: center; min-height: 100vh; margin: 0; padding: 20px 0; background-image: radial-gradient(circle at 50% 50%, #450a0a 0%, #020617 100%); }
-        .rd-panel { background: rgba(15, 23, 42, 0.95); border: 1px solid #ef4444; box-shadow: 0 0 50px rgba(239, 68, 68, 0.2); width: 95%; max-width: 480px; border-radius: 30px; backdrop-filter: blur(15px); }
-        .tech-font { font-family: 'Orbitron', sans-serif; }
-        .btn-red { background: linear-gradient(90deg, #ef4444, #991b1b); transition: 0.3s; }
-        input, select { background: rgba(0,0,0,0.5); border: 1px solid #334155; color: white; }
+        body { background: #020617; color: white; font-family: sans-serif; padding: 20px; }
+        .box { background: #0f172a; border: 1px solid #ef4444; padding: 20px; border-radius: 20px; }
     </style>
 </head>
 <body>
-    <div class="rd-panel overflow-hidden mb-10">
-        <div class="p-8 pb-4 text-center border-b border-white/5">
-            <h1 class="tech-font text-white font-bold text-xl uppercase tracking-tighter">RD TECH ADMIN</h1>
-            <p class="text-[9px] text-red-500 tracking-[0.5em] font-bold mt-1 uppercase">V4 FORCE-CONNECT</p>
-        </div>
-
-        <div class="p-6">
-            <div id="admin-gate">
-                <input type="password" id="admin-pass" class="w-full rounded-2xl p-4 mb-4 text-center text-red-500 tracking-[0.8em]" placeholder="ADMIN PIN">
-                <button onclick="unlockAdmin()" class="w-full btn-red text-white py-4 rounded-2xl tech-font text-xs font-bold uppercase tracking-widest">Verify Admin</button>
-            </div>
-
-            <div id="management-console" class="hidden space-y-6">
-                <div class="bg-black/40 p-5 rounded-2xl border border-red-900/30">
-                    <input type="email" id="user-email" class="w-full rounded-xl p-3 mb-3 text-sm selectable" placeholder="User Email">
-                    <input type="text" id="user-pass" class="w-full rounded-xl p-3 mb-3 text-sm selectable" placeholder="Password (Min 6 chars)">
-                    <select id="user-status" class="w-full rounded-xl p-3 mb-4 text-sm font-bold">
-                        <option value="active" class="text-green-500">ACTIVE</option>
-                        <option value="expired" class="text-yellow-500">EXPIRED</option>
-                        <option value="banned" class="text-red-500">BANNED</option>
-                    </select>
-                    <button id="save-btn" class="w-full btn-red text-white py-3 rounded-xl tech-font text-xs font-bold uppercase tracking-widest">Execute Override</button>
-                    <p id="sys-msg" class="text-center text-[10px] mt-3 font-mono h-4 text-slate-400"></p>
-                </div>
-                <div class="bg-black/40 p-5 rounded-2xl border border-slate-800">
-                    <button onclick="loadUsers()" class="w-full bg-slate-800 py-2 rounded text-[10px] text-white tech-font mb-4">REFRESH LIST</button>
-                    <div id="user-list" class="space-y-2 max-h-[300px] overflow-y-auto pr-2"></div>
-                </div>
-            </div>
-        </div>
+    <div class="box">
+        <h1 style="color:#ef4444; font-weight:bold; margin-bottom:15px;">RD ADMIN DEBUG V5</h1>
+        <input type="email" id="u-email" class="w-full p-3 mb-2 bg-black border border-slate-700" placeholder="Test Email">
+        <input type="text" id="u-pass" class="w-full p-3 mb-4 bg-black border border-slate-700" placeholder="Password">
+        <button onclick="runTest()" id="btn" class="w-full bg-red-600 p-4 font-bold rounded">RUN DATABASE TEST</button>
+        <div id="out" class="mt-4 text-xs font-mono text-slate-400">System Ready.</div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, collection, getDocs, initializeFirestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { initializeFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        const firebaseConfig = {
+        const config = {
             apiKey: "AIzaSyBWRGm_ixHVuGKyve4jBcWcpUNJFNN_IZk",
             authDomain: "rd-tech-subs-bc1d4.firebaseapp.com",
             projectId: "rd-tech-subs-bc1d4",
@@ -64,214 +33,38 @@
             appId: "1:134428732541:web:eb61db52ca8ae82b281514"
         };
 
-        const app = initializeApp(firebaseConfig);
+        const app = initializeApp(config);
         const auth = getAuth(app);
-        
-        // FORCE-CONNECT: This fixes hanging connections on mobile browsers
-        const db = initializeFirestore(app, {
-            experimentalForceLongPolling: true,
-            useFetchStreams: false
-        });
+        const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
-        window.unlockAdmin = function() {
-            if(document.getElementById('admin-pass').value === "RDADMIN7") {
-                document.getElementById('admin-gate').classList.add('hidden');
-                document.getElementById('management-console').classList.remove('hidden');
-                window.loadUsers();
-            } else { alert("WRONG PIN"); }
-        };
-
-        window.loadUsers = async function() {
-            const listDiv = document.getElementById('user-list');
-            listDiv.innerHTML = '<p class="text-center text-[10px] animate-pulse">CONNECTING...</p>';
-            try {
-                const querySnapshot = await getDocs(collection(db, "subscriptions"));
-                let html = '';
-                querySnapshot.forEach((doc) => {
-                    const status = doc.data().status;
-                    html += `<div class="bg-black/60 p-3 rounded-lg border border-slate-800 flex justify-between">
-                        <span class="text-[10px] font-mono truncate mr-2">${doc.id}</span>
-                        <span class="text-[9px] font-bold uppercase ${status=='active'?'text-green-500':'text-red-500'}">${status}</span>
-                    </div>`;
-                });
-                listDiv.innerHTML = html || '<p class="text-center text-[10px]">NO USERS</p>';
-            } catch(e) { listDiv.innerHTML = `<p class="text-red-500 text-[10px]">ERROR: ${e.message}</p>`; }
-        };
-
-        document.getElementById('save-btn').addEventListener('click', async () => {
-            const email = document.getElementById('user-email').value.trim().toLowerCase();
-            const pass = document.getElementById('user-pass').value.trim();
-            const status = document.getElementById('user-status').value;
-            const msgBox = document.getElementById('sys-msg');
-
-            if(!email) return;
-            msgBox.innerText = "OVERRIDING...";
-
-            // Added a 10-second timeout so it doesn't hang forever
-            const timeout = setTimeout(() => {
-                if(msgBox.innerText === "OVERRIDING...") {
-                    msgBox.innerText = "TIMEOUT: DATABASE IS BUSY. REFRESH PAGE.";
-                    msgBox.style.color = "red";
-                }
-            }, 10000);
-
-            try {
-                if(pass && pass.length >= 6) {
-                    try {
-                        await createUserWithEmailAndPassword(auth, email, pass);
-                        await signOut(auth);
-                    } catch(e) { if(e.code !== 'auth/email-already-in-use') throw e; }
-                }
-                await setDoc(doc(db, "subscriptions", email), { status: status }, { merge: true });
-                clearTimeout(timeout);
-                msgBox.innerText = "SUCCESS: " + status.toUpperCase();
-                msgBox.style.color = "#22c55e";
-                window.loadUsers();
-            } catch(e) {
-                clearTimeout(timeout);
-                msgBox.innerText = "FAILED: " + e.message;
-                msgBox.style.color = "red";
-            }
-        });
-    </script>
-</body>
-</html>            projectId: "rd-tech-subs-bc1d4",
-            storageBucket: "rd-tech-subs-bc1d4.firebasestorage.app",
-            messagingSenderId: "134428732541",
-            appId: "1:134428732541:web:eb61db52ca8ae82b281514"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        
-        let allUsersData = [];
-
-        window.unlockAdmin = function() {
-            if(document.getElementById('admin-pass').value === "RDADMIN7") {
-                document.getElementById('admin-gate').classList.add('hidden');
-                document.getElementById('management-console').classList.remove('hidden');
-                document.getElementById('lock-sys-btn').classList.remove('hidden');
-                window.loadUsers(); 
-            } else { alert("UNAUTHORIZED"); }
-        }
-
-        window.editUser = function(email, status) {
-            document.getElementById('user-email').value = email;
-            document.getElementById('user-status').value = status;
-            document.getElementById('user-pass').value = '';
-            document.getElementById('sys-msg').innerText = "Ready to modify: " + email;
-            document.getElementById('sys-msg').style.color = "#3b82f6";
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // NEW: Delete User Logic
-        window.deleteUser = async function(email) {
-            if(confirm(`Are you sure you want to permanently DELETE ${email}?`)) {
-                try {
-                    await deleteDoc(doc(db, "subscriptions", email));
-                    document.getElementById('sys-msg').innerText = `DELETED: ${email}`;
-                    document.getElementById('sys-msg').style.color = "#ef4444";
-                    window.loadUsers();
-                } catch(e) {
-                    alert("Error deleting user: " + e.message);
-                }
-            }
-        }
-
-        window.loadUsers = async function() {
-            const listDiv = document.getElementById('user-list');
-            listDiv.innerHTML = '<div class="text-center py-6"><div class="w-6 h-6 border-2 border-red-500 border-t-transparent rounded-full animate-spin inline-block"></div></div>';
+        window.runTest = async function() {
+            const out = document.getElementById('out');
+            const email = document.getElementById('u-email').value;
+            const pass = document.getElementById('u-pass').value;
             
-            try {
-                const querySnapshot = await getDocs(collection(db, "subscriptions"));
-                allUsersData = [];
-                let total = 0, active = 0, blocked = 0;
-
-                querySnapshot.forEach((doc) => {
-                    total++;
-                    const data = doc.data();
-                    if(data.status === 'active') active++;
-                    if(data.status === 'banned') blocked++;
-                    allUsersData.push({ email: doc.id, status: data.status || 'expired' });
-                });
-
-                // Update Stats
-                document.getElementById('stat-total').innerText = total;
-                document.getElementById('stat-active').innerText = active;
-                document.getElementById('stat-blocked').innerText = blocked;
-
-                renderGrid(allUsersData);
-            } catch(e) {
-                listDiv.innerHTML = `<p class="text-center text-red-500 text-[10px] py-4">Database Read Error.<br>Check Firestore Rules.</p>`;
-            }
-        }
-
-        function renderGrid(users) {
-            const listDiv = document.getElementById('user-list');
-            let html = '';
+            if(!email || !pass) { alert("Fill fields"); return; }
             
-            users.forEach((user) => {
-                let statusColor = 'text-yellow-500'; let bgGlow = 'border-yellow-900/30'; let icon = 'fa-exclamation-triangle';
-                if(user.status === 'active') { statusColor = 'text-green-500'; bgGlow = 'border-green-900/30'; icon = 'fa-check-circle'; }
-                if(user.status === 'banned') { statusColor = 'text-red-500'; bgGlow = 'border-red-900/50'; icon = 'fa-ban'; }
-
-                html += `
-                    <div class="bg-black/60 p-3 rounded-xl border ${bgGlow} flex justify-between items-center transition-all hover:bg-black/80">
-                        <div class="overflow-hidden pr-2 flex-1">
-                            <p class="text-white text-[11px] font-mono truncate mb-1 selectable">${user.email}</p>
-                            <p class="${statusColor} text-[8px] font-bold uppercase tracking-widest"><i class="fas ${icon} mr-1"></i>${user.status}</p>
-                        </div>
-                        <div class="flex gap-1">
-                            <button onclick="editUser('${user.email}', '${user.status}')" class="bg-slate-800 text-slate-300 hover:text-white px-2 py-1.5 rounded text-[9px] uppercase font-bold tech-font tracking-wider"><i class="fas fa-edit"></i></button>
-                            <button onclick="deleteUser('${user.email}')" class="bg-red-900/30 text-red-500 hover:bg-red-600 hover:text-white px-2 py-1.5 rounded text-[9px] uppercase font-bold tech-font tracking-wider"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                `;
-            });
-
-            if(html === '') html = '<p class="text-center text-slate-500 text-xs py-4 tech-font uppercase">No records found.</p>';
-            listDiv.innerHTML = html;
-        }
-
-        // NEW: Search Filter Logic
-        document.getElementById('search-users').addEventListener('input', function(e) {
-            const term = e.target.value.toLowerCase();
-            const filtered = allUsersData.filter(u => u.email.includes(term));
-            renderGrid(filtered);
-        });
-
-        document.getElementById('save-btn').addEventListener('click', async () => {
-            const email = document.getElementById('user-email').value.trim().toLowerCase();
-            const pass = document.getElementById('user-pass').value.trim();
-            const status = document.getElementById('user-status').value;
-            const msgBox = document.getElementById('sys-msg');
-
-            if(!email) { msgBox.innerText = "Error: Target Email Required."; msgBox.style.color = "#ef4444"; return; }
-            msgBox.innerText = "Executing Override..."; msgBox.style.color = "#fbbf24";
-
+            out.innerHTML = "STEP 1: Testing Authentication...";
             try {
-                if(pass && pass.length >= 6) {
-                    try {
-                        await createUserWithEmailAndPassword(auth, email, pass);
-                        await signOut(auth); // Keep admin signed out of user accounts
-                    } catch(authErr) {
-                        if(authErr.code !== 'auth/email-already-in-use') throw authErr; 
-                    }
-                }
-                await setDoc(doc(db, "subscriptions", email), {
-                    status: status, updatedAt: new Date().toISOString()
-                }, { merge: true });
-
-                msgBox.innerText = `SUCCESS: ${email} is now ${status.toUpperCase()}`;
-                msgBox.style.color = "#22c55e";
-                document.getElementById('user-pass').value = '';
-                window.loadUsers();
-            } catch(error) {
-                msgBox.innerText = "System Error: " + error.message;
-                msgBox.style.color = "#ef4444";
+                await createUserWithEmailAndPassword(auth, email, pass);
+                await signOut(auth);
+                out.innerHTML += "<br>✅ Auth Success!";
+            } catch(e) {
+                if(e.code === 'auth/email-already-in-use') { out.innerHTML += "<br>✅ Auth: User exists (OK)"; }
+                else { alert("AUTH ERROR: " + e.message); return; }
             }
-        });
+
+            out.innerHTML += "<br>STEP 2: Testing Firestore Write...";
+            try {
+                await setDoc(doc(db, "subscriptions", email), { status: "active", time: Date.now() });
+                out.innerHTML += "<br>✅ DATABASE SUCCESS! USER ADDED.";
+                alert("IT WORKS! Check your Firebase Dashboard now.");
+            } catch(e) {
+                console.error(e);
+                alert("DATABASE ERROR: " + e.message);
+                out.innerHTML += "<br>❌ FAILED: " + e.code;
+            }
+        };
     </script>
 </body>
 </html>
