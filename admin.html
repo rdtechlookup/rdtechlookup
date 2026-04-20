@@ -3,47 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RD TECH | Admin Terminal V5</title>
+    <title>RD TECH | Master Admin V7</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600&display=swap');
-        body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh; padding: 20px; background-image: radial-gradient(circle at 50% 50%, #450a0a 0%, #020617 100%); }
-        .rd-panel { background: rgba(15, 23, 42, 0.95); border: 1px solid #ef4444; width: 100%; max-width: 450px; border-radius: 25px; padding: 25px; backdrop-filter: blur(10px); }
+        body { background: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; background-image: radial-gradient(circle at 50% 50%, #450a0a 0%, #020617 100%); }
+        .rd-panel { background: rgba(15, 23, 42, 0.95); border: 1px solid #ef4444; width: 100%; max-width: 480px; border-radius: 25px; padding: 25px; backdrop-filter: blur(10px); }
         .tech-font { font-family: 'Orbitron', sans-serif; }
-        input, select { background: rgba(0,0,0,0.5); border: 1px solid #334155; color: white; border-radius: 12px; padding: 12px; width: 100%; margin-bottom: 15px; }
+        input, select { background: rgba(0,0,0,0.5); border: 1px solid #334155; color: white; border-radius: 12px; padding: 12px; width: 100%; margin-bottom: 12px; outline: none; }
         .btn-red { background: linear-gradient(90deg, #ef4444, #991b1b); width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; }
+        .user-card { background: rgba(0,0,0,0.4); border: 1px solid #1e293b; padding: 12px; border-radius: 15px; margin-bottom: 8px; }
     </style>
 </head>
 <body>
     <div class="rd-panel">
-        <h1 class="tech-font text-center text-xl mb-6 text-red-500">RD ADMIN V5</h1>
+        <div class="text-center mb-6">
+            <h1 class="tech-font text-xl text-red-500">RD MASTER ADMIN</h1>
+            <p class="text-[8px] text-slate-500 uppercase tracking-widest">Zero-Fail Edition</p>
+        </div>
         
         <div id="admin-gate">
-            <input type="password" id="admin-pin" placeholder="ENTER ADMIN PIN" class="text-center tracking-widest">
-            <button onclick="unlock()" class="btn-red tech-font">UNLOCK TERMINAL</button>
+            <input type="password" id="admin-pin" placeholder="ENTER ADMIN PIN" class="text-center">
+            <button onclick="unlock()" class="btn-red tech-font">ACCESS</button>
         </div>
 
         <div id="console" class="hidden">
             <input type="email" id="u-email" placeholder="Customer Email">
-            <input type="text" id="u-pass" placeholder="Password (Min 6 characters)">
+            <input type="text" id="u-pass" placeholder="Password (Min 6 chars)">
             <select id="u-status">
-                <option value="active">STATUS: ACTIVE</option>
-                <option value="expired">STATUS: EXPIRED</option>
-                <option value="banned">STATUS: BANNED</option>
+                <option value="active">ACTIVE (Paid)</option>
+                <option value="expired">EXPIRED</option>
+                <option value="banned">BANNED (Block)</option>
             </select>
-            <button id="save-btn" class="btn-red tech-font mb-4">SAVE TO DATABASE</button>
-            <p id="msg" class="text-center text-xs font-mono"></p>
-            <hr class="border-slate-800 my-4">
-            <button onclick="load()" class="text-[10px] text-slate-500 uppercase tracking-widest w-full">Refresh User List</button>
-            <div id="list" class="mt-4 space-y-2 max-h-40 overflow-y-auto pr-2"></div>
+            <button id="save-btn" class="btn-red tech-font uppercase">Update User</button>
+            <p id="msg" class="text-center text-[10px] mt-3 font-mono h-4"></p>
+            <div id="list" class="mt-6 max-h-64 overflow-y-auto"></div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { initializeFirestore, doc, setDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        // CRITICAL: We use initializeFirestore with specific settings
+        import { initializeFirestore, doc, setDoc, getDocs, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const config = {
             apiKey: "AIzaSyBWRGm_ixHVuGKyve4jBcWcpUNJFNN_IZk",
@@ -56,28 +59,47 @@
 
         const app = initializeApp(config);
         const auth = getAuth(app);
-        const db = initializeFirestore(app, { experimentalForceLongPolling: true });
+        
+        // This setting forces the connection to stay alive even on weak mobile networks
+        const db = initializeFirestore(app, {
+            experimentalForceLongPolling: true,
+            useFetchStreams: false
+        });
 
         window.unlock = () => {
             if(document.getElementById('admin-pin').value === "RDADMIN7") {
                 document.getElementById('admin-gate').style.display = 'none';
                 document.getElementById('console').classList.remove('hidden');
                 window.load();
-            }
+            } else { alert("ACCESS DENIED"); }
         };
 
         window.load = async () => {
             const list = document.getElementById('list');
-            list.innerHTML = "Loading...";
+            list.innerHTML = "<p class='text-center text-[9px] animate-pulse'>SYNCING DATABASE...</p>";
             try {
                 const snap = await getDocs(collection(db, "subscriptions"));
                 list.innerHTML = "";
                 snap.forEach(d => {
-                    list.innerHTML += `<div class="bg-black/40 p-2 rounded text-[10px] flex justify-between">
-                        <span>${d.id}</span><span class="font-bold">${d.data().status}</span>
-                    </div>`;
+                    const s = d.data().status;
+                    const color = s === 'active' ? 'text-green-500' : 'text-red-500';
+                    list.innerHTML += `
+                        <div class="user-card flex justify-between items-center">
+                            <p class="text-[10px] font-mono truncate mr-2">${d.id}</p>
+                            <div class="flex gap-2 items-center">
+                                <span class="${color} text-[8px] font-bold uppercase">${s}</span>
+                                <button onclick="delUser('${d.id}')" class="text-slate-700 hover:text-red-500"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>`;
                 });
-            } catch(e) { list.innerHTML = "Error loading users."; }
+            } catch(e) { list.innerHTML = "Sync Failed. Check Internet."; }
+        };
+
+        window.delUser = async (email) => {
+            if(confirm("Delete " + email + "?")) {
+                await deleteDoc(doc(db, "subscriptions", email));
+                window.load();
+            }
         };
 
         document.getElementById('save-btn').onclick = async () => {
@@ -87,16 +109,17 @@
             const msg = document.getElementById('msg');
 
             if(!email) return;
-            msg.innerText = "Processing...";
+            msg.innerText = "WRITING...";
             msg.style.color = "yellow";
 
             try {
-                if(pass) {
+                if(pass && pass.length >= 6) {
                     try { await createUserWithEmailAndPassword(auth, email, pass); await signOut(auth); }
                     catch(e) { if(e.code !== 'auth/email-already-in-use') throw e; }
                 }
-                await setDoc(doc(db, "subscriptions", email), { status: status }, { merge: true });
-                msg.innerText = "SUCCESSFULLY SAVED!";
+                // We use setDoc to create the sub-collection entry
+                await setDoc(doc(db, "subscriptions", email), { status: status, date: Date.now() }, { merge: true });
+                msg.innerText = "SUCCESS!";
                 msg.style.color = "#22c55e";
                 window.load();
             } catch(e) {
